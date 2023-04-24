@@ -7,7 +7,7 @@ class manejadorDB:
     """
 
     def __init__(self, user: str, password: str, host: str) -> None:
-        """
+        """ 
         Establece la conexion con la base de datos a traves de las credenciales ingresadas por la persona
         """
         self.conexion = connector.connect(
@@ -98,3 +98,27 @@ class manejadorDB:
         query = f"INSERT INTO {table}({columns}) VALUES({values});"
         self.cursor.execute(query)
         self.commit()
+
+    def selectAllFrom(self, table: str) -> tuple:
+        """
+        SELECT * FROM table; \n
+        Selecciona todos los registros de una tabla
+        """
+        self.cursor.execute(f"SELECT * FROM {table};")
+
+        return self.cursor.fetchall()
+
+    def selectAllFromOrder(self, table: str, listColumn: list, order: str):
+        """
+        SELECT * FROM table ORDER BY column order;\n
+        Selecciona todos los registros ordenados segun la lista de columnas,
+        la variable order solo puede tomar dos valores ASC o DESC
+        """
+        columnas = ""
+        for valores in listColumn:
+            columnas += f"{valores}, "
+        valores = valores[0:len(valores)-2]
+
+        self.cursor.execute(
+            f"SELECT * FROM {table} ORDER BY {columnas} {order};")
+        return self.cursor.fetchall()
