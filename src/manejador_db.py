@@ -16,12 +16,14 @@ class manejadorDB:
 
     def useDataBase(self, nameDB: str) -> None:
         """
+        USE nameDB;\n
         Recibe como parametro el nombre de la base de datos que se quiere usar
         """
         self.cursor.execute(f"USE {nameDB};")
 
     def commit(self) -> None:
         """
+        COMMIT;\n
         Hace commit de los cambios realizados en la base de datos
         """
         self.cursor.execute(f"COMMIT;")
@@ -99,18 +101,17 @@ class manejadorDB:
         self.cursor.execute(query)
         self.commit()
 
-    def selectAllFrom(self, table: str) -> tuple:
+    def selectAllFrom(self, table: str) -> list[tuple]:
         """
         SELECT * FROM table; \n
         Selecciona todos los registros de una tabla
         """
         self.cursor.execute(f"SELECT * FROM {table};")
-
         return self.cursor.fetchall()
 
-    def selectAllFromOrder(self, table: str, listColumn: list, order: str):
+    def selectAllFromOrder(self, table: str, listColumn: list, order: str) -> list[tuple]:
         """
-        SELECT * FROM table ORDER BY column order;\n
+        SELECT * FROM table ORDER BY listColumn order;\n
         Selecciona todos los registros ordenados segun la lista de columnas,
         la variable order solo puede tomar dos valores ASC o DESC
         """
@@ -122,3 +123,21 @@ class manejadorDB:
         self.cursor.execute(
             f"SELECT * FROM {table} ORDER BY {columnas} {order};")
         return self.cursor.fetchall()
+
+    def selectAllWhereNull(self, table: str, columnParameter: str) -> list[tuple]:
+        """
+        SELECT * FROM table WHERE columnParameter IS NULL;\n
+        Seleccionamos todos los valores de la table cuando la columnaParameter sea null
+        """
+        self.cursor.execute(
+            f"SELECT * FROM {table} WHERE {columnParameter} IS NULL;")
+        return self.cursor.fetchall()
+
+    def selectAllWhereNotNull(self, table: str, columnParameter: str) -> list[tuple]:
+        """
+        SELECT * FROM table WHERE columnParameter IS NOT NULL;\n
+        Seleccionamos todos los registros de la table cuando el columnParameter sea null
+        """
+        self.cursor.execute(
+            f"SELECT * FROM {table} WHERE {columnParameter} IS NOT NULL;")
+        return self.cursor.fetchall
