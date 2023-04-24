@@ -38,12 +38,10 @@ class manejadorDB:
         values = ""
         parameters = ""
 
-        for columnas in listColumns:
+        for columnas, valores in zip(listColumns, listValues):
             columns += f"{columnas}, "
-        columns = columns[0:len(columns)-2]
-
-        for valores in listValues:
             values += f"{valores}, "
+        columns = columns[0:len(columns)-2]
         values = values[0:len(values)-2]
 
         for parametros, valoresParametros in zip(listParameters, listValuesParameters):
