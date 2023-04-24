@@ -49,9 +49,8 @@ class manejadorDB:
         for parametros, valoresParametros in zip(listParameters, listValuesParameters):
             parameters += f"{parametros}=\'{valoresParametros}\' AND "
         parameters = parameters[0:len(parameters)-5]
-        parameters += ";"
 
-        query = f"INSERT INTO {table}({columns}) VALUES({values}) WHERE {parameters}"
+        query = f"INSERT INTO {table}({columns}) VALUES({values}) WHERE {parameters};"
         self.cursor.execute(query)
         self.commit()
 
@@ -78,7 +77,7 @@ class manejadorDB:
         parameters = parameters[0:len(parameters)-4]
         parameters += ";"
 
-        query = f"INSERT INTO {table}({columns}) VALUES({values}) WHERE {parameters}"
+        query = f"INSERT INTO {table}({columns}) VALUES({values}) WHERE {parameters};"
         self.cursor.execute(query)
         self.commit()
 
@@ -98,6 +97,6 @@ class manejadorDB:
         columns = columns[0:len(columns)-2]
         values = values[0:len(values)-2]
 
-        query = f"INSERT INTO {table}({columns}) VALUES({values})"
+        query = f"INSERT INTO {table}({columns}) VALUES({values});"
         self.cursor.execute(query)
         self.commit()

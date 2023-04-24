@@ -2,6 +2,6 @@
 
 <p>Lista de librerias usadas</p>
 
-<li>
-    <ul>mysql-connector-python</ul>
-</li>
+<ul>
+    <li>mysql-connector-python</li>
+</ul>
