@@ -15,11 +15,18 @@ Consultas automatizadas a una base de datos MySQL, con este objeto se evita escr
     <li>Use database</li>
     <li>Create database</li>
     <li>Drop database</li>
+    <li>Select all</li>
     <li>Select all con condicion AND</li>
     <li>Select all con condicion OR</li>
     <li>Select all order by</li>
     <li>Select all where null</li>
     <li>Select all where not null</li>
+    <li>Select min</li>
+    <li>Select min con condicion AND</li>
+    <li>Select min con condicion OR</li>
+    <li>Select max</li>
+    <li>Select max con condicion AND</li>
+    <li>Select max con condicion OR</li>
     <li>Commit cambios</li>
     <li>Insert</li>
     <li>Insert Columns Where con condicion AND</li>

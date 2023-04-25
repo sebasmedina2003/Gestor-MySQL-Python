@@ -199,6 +199,86 @@ class manejadorDB:
         self.cursor.execute(query)
         return self.cursor.fetchall()
 
+    def selectMin(self, column: str, table: str) -> list[tuple[float | int]]:
+        """
+        SELECT MIN(column) FROM table;\n
+        Selecciona el valor mas pequeño de una columna de una tabla
+        """
+        self.cursor.execute(f"SELECT MIN({column}) FROM {table};")
+        return self.cursor.fetchall()
+
+    def selectMinWhereAND(self, column: str, table: str, listParameter: list[str], listValuesParameters: list) -> list[tuple[int | float]]:
+        """
+        SELECT MIN(column) FROM table WHERE listParameter=listValuesParameters AND...;\n
+        Selecciona el valor mas pequeño de una tabla cuando se cumpla una o mas condiciones concatenadas con AND
+        """
+        condition = ""
+        for parameters, values in zip(listParameter, listValuesParameters):
+            values = values if type(values) in [
+                int, float] else f"\'{values}\'"
+            condition += f"{parameters}={values} AND "
+        condition = condition[0:len(condition)-5]
+
+        query = f"SELECT MIN({column}) FROM {table} WHERE {condition};"
+        self.cursor.execute(query)
+        return self.cursor.fetchall()
+
+    def selectMinWhereOR(self, column: str, table: str, listParameter: list[str], listValuesParameters: list) -> list[tuple[int | float]]:
+        """
+        SELECT MIN(column) FROM table WHERE listParameter=listValuesParameters OR...;\n
+        Selecciona el valor mas pequeño de una tabla cuando se cumpla una o mas condiciones concatenadas con OR
+        """
+        condition = ""
+        for parameters, values in zip(listParameter, listValuesParameters):
+            values = values if type(values) in [
+                int, float] else f"\'{values}\'"
+            condition += f"{parameters}={values} OR "
+        condition = condition[0:len(condition)-4]
+
+        query = f"SELECT MIN({column}) FROM {table} WHERE {condition};"
+        self.cursor.execute(query)
+        return self.cursor.fetchall()
+
+    def selectMax(self, column: str, table: str) -> list[tuple[float | int]]:
+        """
+        SELECT MAX(column) FROM table;\n
+        Selecciona el valor mas grande de la columna de una tabla
+        """
+        self.cursor.execute(f"SELECT MAX({column}) FROM {table};")
+        return self.cursor.fetchall()
+
+    def selectMaxWhereAND(self, column: str, table: str, listParameter: list[str], listValuesParameters: list) -> list[tuple[int | float]]:
+        """
+        SELECT MAX(column) FROM table WHERE listParameter=listValuesParameters AND...;\n
+        Selecciona el valor mas grande de una tabla cuando se cumpla una o mas condiciones concatenadas con AND
+        """
+        condition = ""
+        for parameters, values in zip(listParameter, listValuesParameters):
+            values = values if type(values) in [
+                int, float] else f"\'{values}\'"
+            condition += f"{parameters}={values} AND "
+        condition = condition[0:len(condition)-5]
+
+        query = f"SELECT MAX({column}) FROM {table} WHERE {condition};"
+        self.cursor.execute(query)
+        return self.cursor.fetchall()
+
+    def selectMaxWhereOR(self, column: str, table: str, listParameter: list[str], listValuesParameters: list) -> list[tuple[int | float]]:
+        """
+        SELECT MAX(column) FROM table WHERE listParameter=listValuesParameters OR...;\n
+        Selecciona el valor mas grande de una tabla cuando se cumpla una o mas condiciones concatenadas con OR
+        """
+        condition = ""
+        for parameters, values in zip(listParameter, listValuesParameters):
+            values = values if type(values) in [
+                int, float] else f"\'{values}\'"
+            condition += f"{parameters}={values} OR "
+        condition = condition[0:len(condition)-4]
+
+        query = f"SELECT MAX({column}) FROM {table} WHERE {condition};"
+        self.cursor.execute(query)
+        return self.cursor.fetchall()
+
     def updateWhereAND(self, table: str, listColumns: list[str], listValues: list, listParameters: list[str], listValuesParameters: list) -> None:
         """
         UPDATE table SET listColumns=listValues WHERE listParameters=ListValuesParameters AND ...;\n
