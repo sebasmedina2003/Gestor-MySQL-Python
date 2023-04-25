@@ -33,6 +33,9 @@ Consultas automatizadas a una base de datos MySQL, con este objeto se evita escr
     <li>Select averge</li>
     <li>Select averge con condicion AND</li>
     <li>Select averge con condicion OR</li>
+    <li>Select sum</li>
+    <li>Select sum con condicion AND</li>
+    <li>Select sum con condicion OR</li>
     <li>Commit cambios</li>
     <li>Insert</li>
     <li>Insert Columns Where con condicion AND</li>
