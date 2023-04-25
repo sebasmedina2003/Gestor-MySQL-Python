@@ -27,6 +27,12 @@ Consultas automatizadas a una base de datos MySQL, con este objeto se evita escr
     <li>Select max</li>
     <li>Select max con condicion AND</li>
     <li>Select max con condicion OR</li>
+    <li>Select count</li>
+    <li>Select count con condicion AND</li>
+    <li>Select count con condicion OR</li>
+    <li>Select averge</li>
+    <li>Select averge con condicion AND</li>
+    <li>Select averge con condicion OR</li>
     <li>Commit cambios</li>
     <li>Insert</li>
     <li>Insert Columns Where con condicion AND</li>

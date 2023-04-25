@@ -279,6 +279,145 @@ class manejadorDB:
         self.cursor.execute(query)
         return self.cursor.fetchall()
 
+    def selectCount(self, table: str, column: str) -> int:
+        """
+        SELECT COUNT(column) FROM table;\n
+        Cuenta cuantos registros hay de una columna de una tabla
+        """
+        self.cursor.execute(f"SELECT COUNT({column}) FROM {table};")
+        aux = self.cursor.fetchall()
+        return aux[0][0]
+
+    def selectCountWhereAND(self, table: str, column: str, listParameters: list[str], listValuesParameters: list) -> int:
+        """
+        SELECT COUNT(column) FROM table WHERE listParameters=listValuesParameters AND...;\n
+        Cuenta cuantos valores de una columna cumplen con ciertos parametros concatenados con AND
+        """
+        queryParameters = ""
+
+        for parameters, values in zip(listParameters, listValuesParameters):
+            values = values if type(values) in [
+                int, float] else f"\'{values}\'"
+            queryParameters += f"{parameters}={values} AND "
+        queryParameters = queryParameters[0:len(queryParameters)-5]
+
+        query = f"SELECT COUNT({column}) FROM {table} WHERE {queryParameters};"
+        self.cursor.execute(query)
+        aux = self.cursor.fetchall()
+        return aux[0][0]
+
+    def selectCountWhereOR(self, table: str, column: str, listParameters: list[str], listValuesParameters: list) -> int:
+        """
+        SELECT COUNT(column) FROM table WHERE listParameters=listValuesParameters OR...;\n
+        Cuenta cuantos valores de una columna cumplen con ciertos parametros concatenados con OR
+        """
+        queryParameters = ""
+
+        for parameters, values in zip(listParameters, listValuesParameters):
+            values = values if type(values) in [
+                int, float] else f"\'{values}\'"
+            queryParameters += f"{parameters}={values} OR "
+        queryParameters = queryParameters[0:len(queryParameters)-4]
+
+        query = f"SELECT COUNT({column}) FROM {table} WHERE {queryParameters};"
+        self.cursor.execute(query)
+        aux = self.cursor.fetchall()
+        return aux[0][0]
+
+    def selectAverage(self, table: str, columnNumeric: str) -> float:
+        """
+        SELECT AVG(column) FROM table;\n
+        Retorna el promedio de valores de una columna numerica de una base de datos
+        """
+        self.cursor.execute(f"SELECT AVG({columnNumeric}) FROM {table};")
+        aux = self.cursor.fetchall()
+        return aux[0][0]
+
+    def selectAveragetWhereAND(self, table: str, columnNumeric: str, listParameters: list[str], listValuesParameters: list) -> int:
+        """
+        SELECT AVG(columnNumeric) FROM table WHERE listParameters=listValuesParameters AND...;\n
+        Calcula el promedio de valores de una columna numerica si cumple las condiciones establecidas, 
+        estas se concatenaran con el conector AND
+        """
+        queryParameters = ""
+
+        for parameters, values in zip(listParameters, listValuesParameters):
+            values = values if type(values) in [
+                int, float] else f"\'{values}\'"
+            queryParameters += f"{parameters}={values} AND "
+        queryParameters = queryParameters[0:len(queryParameters)-5]
+
+        query = f"SELECT AVG({columnNumeric}) FROM {table} WHERE {queryParameters};"
+        self.cursor.execute(query)
+        aux = self.cursor.fetchall()
+        return aux[0][0]
+
+    def selectAveragetWhereOR(self, table: str, columnNumeric: str, listParameters: list[str], listValuesParameters: list) -> int:
+        """
+        SELECT AVG(columnNumeric) FROM table WHERE listParameters=listValuesParameters OR...;\n
+        Calcula el promedio de valores de una columna numerica si cumple las condiciones establecidas, 
+        estas se concatenaran con el conector OR
+        """
+        queryParameters = ""
+
+        for parameters, values in zip(listParameters, listValuesParameters):
+            values = values if type(values) in [
+                int, float] else f"\'{values}\'"
+            queryParameters += f"{parameters}={values} OR "
+        queryParameters = queryParameters[0:len(queryParameters)-4]
+
+        query = f"SELECT AVG({columnNumeric}) FROM {table} WHERE {queryParameters};"
+        self.cursor.execute(query)
+        aux = self.cursor.fetchall()
+        return aux[0][0]
+
+    def selectSum(self, table: str, columnNumeric: str) -> int | float:
+        """
+        SELECT SUM(column) FROM table;\n
+        Suma todos los valores de una columna numerica de una tabla
+        """
+        self.cursor.execute(f"SELECT SUM({columnNumeric}) FROM {table};")
+        aux = self.cursor.fetchall()
+        return aux[0][0]
+
+    def selectSumtWhereAND(self, table: str, columnNumeric: str, listParameters: list[str], listValuesParameters: list) -> int:
+        """
+        SELECT SUM(columnNumeric) FROM table WHERE listParameters=listValuesParameters AND...;\n
+        Suma todos los valores de una columna numerica que cumplan con las condiciones establecidas, estas se concatenaran 
+        con el conector logico AND
+        """
+        queryParameters = ""
+
+        for parameters, values in zip(listParameters, listValuesParameters):
+            values = values if type(values) in [
+                int, float] else f"\'{values}\'"
+            queryParameters += f"{parameters}={values} AND "
+        queryParameters = queryParameters[0:len(queryParameters)-5]
+
+        query = f"SELECT SUM({columnNumeric}) FROM {table} WHERE {queryParameters};"
+        self.cursor.execute(query)
+        aux = self.cursor.fetchall()
+        return aux[0][0]
+
+    def selectSumtWhereOR(self, table: str, columnNumeric: str, listParameters: list[str], listValuesParameters: list) -> int:
+        """
+        SELECT SUM(columnNumeric) FROM table WHERE listParameters=listValuesParameters OR...;\n
+        Suma todos los valores de una columna numerica que cumplan con las condiciones establecidas, estas se concatenaran 
+        con el conector logico OR
+        """
+        queryParameters = ""
+
+        for parameters, values in zip(listParameters, listValuesParameters):
+            values = values if type(values) in [
+                int, float] else f"\'{values}\'"
+            queryParameters += f"{parameters}={values} OR "
+        queryParameters = queryParameters[0:len(queryParameters)-4]
+
+        query = f"SELECT SUM({columnNumeric}) FROM {table} WHERE {queryParameters};"
+        self.cursor.execute(query)
+        aux = self.cursor.fetchall()
+        return aux[0][0]
+
     def updateWhereAND(self, table: str, listColumns: list[str], listValues: list, listParameters: list[str], listValuesParameters: list) -> None:
         """
         UPDATE table SET listColumns=listValues WHERE listParameters=ListValuesParameters AND ...;\n
