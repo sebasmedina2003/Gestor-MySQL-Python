@@ -28,7 +28,7 @@ class manejadorDB:
         """
         self.cursor.execute(f"COMMIT;")
 
-    def insertColumnsWhereAND(self, table: str, listColumns: list, listValues: list, listParameters: list, listValuesParameters: list) -> None:
+    def insertColumnsWhereAND(self, table: str, listColumns: list[str], listValues: list, listParameters: list[str], listValuesParameters: list) -> None:
         """
         INSERT INTO table(listColumns) VALUES(listValues) WHERE listParameters = listValuesParameters AND... ;\n
         Atraves del parametro listColumns se le pasa el nombre de las columnas de la base de datos donde se van a insertar los valores,
@@ -42,6 +42,8 @@ class manejadorDB:
 
         for columnas, valores in zip(listColumns, listValues):
             columns += f"{columnas}, "
+            valores = valores if type(valores) in [
+                int, float] else f"\'{valores}\'"
             values += f"{valores}, "
         columns = columns[0:len(columns)-2]
         values = values[0:len(values)-2]
@@ -54,7 +56,7 @@ class manejadorDB:
         self.cursor.execute(query)
         self.commit()
 
-    def insertColumnsWhereOR(self, table: str, listColumns: list, listValues: list, listParameters: list, listValuesParameters: list) -> None:
+    def insertColumnsWhereOR(self, table: str, listColumns: list[str], listValues: list, listParameters: list[str], listValuesParameters: list) -> None:
         """
         INSERT INTO table(listColumns) VALUES(listValues) WHERE listParameters = listValuesParameters OR... ;\n
         Atraves del parametro listColumns se le pasa el nombre de las columnas de la base de datos donde se van a insertar los valores,
@@ -68,12 +70,19 @@ class manejadorDB:
 
         for columnas, valores in zip(listColumns, listValues):
             columns += f"{columnas}, "
+            valores = valores if type(valores) in [
+                int, float] else f"\'{valores}\'"
+
             values += f"{valores}, "
+
         columns = columns[0:len(columns)-2]
         values = values[0:len(values)-2]
 
         for parametros, valoresParametros in zip(listParameters, listValuesParameters):
-            parameters += f"{parametros}=\'{valoresParametros}\' OR "
+            valoresParametros = valoresParametros if type(valoresParametros) in [
+                int, float] else f"\'{valoresParametros}\'"
+
+            parameters += f"{parametros}={valoresParametros} OR "
         parameters = parameters[0:len(parameters)-4]
         parameters += ";"
 
@@ -81,23 +90,22 @@ class manejadorDB:
         self.cursor.execute(query)
         self.commit()
 
-    def insertRow(self, table: str, listColumns: list, listValues: list) -> None:
+    def insertRow(self, table: str, listValues: list) -> None:
         """
-        INSERT INTO table(listColumns) VALUES(listValues);\n
+        INSERT INTO table VALUES(listValues);\n
         Se debe pasar a traves del parametro listColumns una lista de strings que contengan el nombre de las columnas
         donde se va a insertar la informacion pasada a traves del parametro listValues
         """
-        columns = ""
         values = ""
 
-        for columnas, valores in zip(listColumns, listValues):
-            columns += f"{columnas}, "
+        for valores in listValues:
+            valores = valores if type(valores) in [
+                int, float] else f"\'{valores}\'"
             values += f"{valores}, "
 
-        columns = columns[0:len(columns)-2]
         values = values[0:len(values)-2]
 
-        query = f"INSERT INTO {table}({columns}) VALUES({values});"
+        query = f"INSERT INTO {table} VALUES({values});"
         self.cursor.execute(query)
         self.commit()
 
@@ -109,7 +117,7 @@ class manejadorDB:
         self.cursor.execute(f"SELECT * FROM {table};")
         return self.cursor.fetchall()
 
-    def selectAllFromOrder(self, table: str, listColumn: list, order: str) -> list[tuple]:
+    def selectAllFromOrder(self, table: str, listColumn: list[str], order: str) -> list[tuple]:
         """
         SELECT * FROM table ORDER BY listColumn order;\n
         Selecciona todos los registros ordenados segun la lista de columnas,
@@ -118,10 +126,11 @@ class manejadorDB:
         columnas = ""
         for valores in listColumn:
             columnas += f"{valores}, "
-        valores = valores[0:len(valores)-2]
+        columnas = columnas[0:len(columnas)-2]
 
-        self.cursor.execute(
-            f"SELECT * FROM {table} ORDER BY {columnas} {order};")
+        query = f"SELECT * FROM {table} ORDER BY {columnas} {order};"
+        self.cursor.execute(query)
+
         return self.cursor.fetchall()
 
     def selectAllWhereNull(self, table: str, columnParameter: str) -> list[tuple]:
@@ -140,4 +149,128 @@ class manejadorDB:
         """
         self.cursor.execute(
             f"SELECT * FROM {table} WHERE {columnParameter} IS NOT NULL;")
-        return self.cursor.fetchall
+        return self.cursor.fetchall()
+
+    def selectAllWhereAND(self, table: str, listColumnsParameters: list[str], listValuesParameters: list) -> list[tuple]:
+        """
+        SELECT * FROM table WHERE columnsParameters=valuesParameters AND ...;\n
+        Selecciona todas las columnas de una tabla mientras se cumplan las condiciones, estas se concatenaran con AND
+        """
+        queryParameters = ""
+        for parametros, valores in zip(listColumnsParameters, listValuesParameters):
+            valores = valores if type(valores) in [
+                int, float] else f"\'{valores}\'"
+            queryParameters += f"{parametros}={valores} AND "
+        queryParameters = queryParameters[0:len(queryParameters)-5]
+
+        query = f"SELECT * FROM {table} WHERE {queryParameters};"
+        self.cursor.execute(query)
+        return self.cursor.fetchall()
+
+    def selectAllWhereOR(self, table: str, listColumnsParameters: list[str], listValuesParameters: list) -> list[tuple]:
+        """
+        SELECT * FROM table WHERE columnsParameters=valuesParameters OR ...;\n
+        Selecciona todas las columnas de una tabla mientras se cumplan las condiciones, estas se concatenaran con OR
+        """
+        queryParameters = ""
+        for parametros, valores in zip(listColumnsParameters, listValuesParameters):
+            valores = valores if type(valores) in [
+                int, float] else f"\'{valores}\'"
+            queryParameters += f"{parametros}={valores} OR "
+        queryParameters = queryParameters[0:len(queryParameters)-4]
+
+        query = f"SELECT * FROM {table} WHERE {queryParameters};"
+        self.cursor.execute(query)
+        return self.cursor.fetchall()
+
+    def updateWhereAND(self, table: str, listColumns: list[str], listValues: list, listParameters: list[str], listValuesParameters: list) -> None:
+        """
+        UPDATE table SET listColumns=listValues WHERE listParameters=ListValuesParameters AND ...;\n
+        Metodo de actualizacion de campos, recibe como parametro el nombre de la tabla a modificar, 
+        la lista de las columnas junto con una lista de sus valores nuevos, 
+        tambien recibe como parametro para la condicion del where una lista de las columnas con otra con sus valores respectivos de bsuqueda encadenados con AND
+        """
+        set = ""
+        for columnas, valores in zip(listColumns, listValues):
+            valores = valores if type(valores) in [
+                int, float] else f"\'{valores}\'"
+            set += f"{columnas}={valores}, "
+        set = set[0:len(set)-2]
+
+        parameters = ""
+        for parameter, valueParameter in zip(listParameters, listValuesParameters):
+            valueParameter = valueParameter if type(valueParameter) in [
+                int, float] else f"\'{valueParameter}\'"
+            parameters = f"{parameter}={valueParameter} AND "
+        parameters = parameters[0:len(parameters)-5]
+
+        query = f"UPDATE {table} SET {set} WHERE {parameters};"
+        print(query)
+        self.cursor.execute(query)
+        self.commit()
+
+    def updateWhereOR(self, table: str, listColumns: list[str], listValues: list, listParameters: list[str], listValuesParameters: list) -> None:
+        """
+        UPDATE table SET listColumns=listValues WHERE listParameters=ListValuesParameters OR ...;\n
+        Metodo de actualizacion de campos, recibe como parametro el nombre de la tabla a modificar, 
+        la lista de las columnas junto con una lista de sus valores nuevos, 
+        tambien recibe como parametro para la condicion del where una lista de las columnas con otra con sus valores respectivos de bsuqueda encadenados con OR
+        """
+        set = ""
+        for columnas, valores in zip(listColumns, listValues):
+            valores = valores if type(valores) in [
+                int, float] else f"\'{valores}\'"
+
+            set += f"{columnas}={valores}, "
+        set = set[0:len(set)-2]
+
+        parameters = ""
+        for parameter, valueParameter in zip(listParameters, listValuesParameters):
+            parameters = f"{parameter}=\'{valueParameter}\' OR "
+        parameters = parameters[0:len(parameters)-4]
+
+        query = f"UPDATE {table} SET {set} WHERE {parameters};"
+        self.cursor.execute(query)
+        self.commit()
+
+    def deleteAll(self, table: str) -> None:
+        """
+        DELETE FROM table;\n
+        Borra todos los datos de una tabla
+        """
+        self.cursor.execute(f"DELETE FROM {table};")
+        self.commit()
+
+    def deleteWhereAND(self, table: str, listParameters: list[str], listValuesParameters: list) -> None:
+        """
+        DELETE FROM table WHERE listParameters=listValuesParameters AND;\n
+        Borra los registros de una tala cuando se cumplen los parametros, estos se concatenaran con AND
+        """
+        queryParameters = ""
+        for parameters, values in zip(listParameters, listValuesParameters):
+            values = values if type(values) in [
+                int, float] else f"\'{values}\'"
+            queryParameters += f"{parameters}={values} AND "
+        queryParameters = queryParameters[0:len(queryParameters)-5]
+
+        query = f"DELETE FROM {table} WHERE {queryParameters};"
+
+        self.cursor.execute(query)
+        self.commit()
+
+    def deleteWhereOR(self, table: str, listParameters: list[str], listValuesParameters: list) -> None:
+        """
+        DELETE FROM table WHERE listParameters=listValuesParameters OR ...;\n
+        Borra los registros de una tala cuando se cumplen los parametros, estos se concatenaran con OR
+        """
+        queryParameters = ""
+        for parameters, values in zip(listParameters, listValuesParameters):
+            values = values if type(values) in [
+                int, float] else f"\'{values}\'"
+            queryParameters += f"{parameters}={values} OR "
+        queryParameters = queryParameters[0:len(queryParameters)-4]
+
+        query = f"DELETE FROM {table} WHERE {queryParameters};"
+
+        self.cursor.execute(query)
+        self.commit()
