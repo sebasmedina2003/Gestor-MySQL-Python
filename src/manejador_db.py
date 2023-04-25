@@ -100,7 +100,6 @@ class manejadorDB:
 
             parameters += f"{parametros}={valoresParametros} OR "
         parameters = parameters[0:len(parameters)-4]
-        parameters += ";"
 
         query = f"INSERT INTO {table}({columns}) VALUES({values}) WHERE {parameters};"
         self.cursor.execute(query)
@@ -193,6 +192,7 @@ class manejadorDB:
             valores = valores if type(valores) in [
                 int, float] else f"\'{valores}\'"
             queryParameters += f"{parametros}={valores} OR "
+
         queryParameters = queryParameters[0:len(queryParameters)-4]
 
         query = f"SELECT * FROM {table} WHERE {queryParameters};"

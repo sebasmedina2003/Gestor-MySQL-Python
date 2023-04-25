@@ -24,7 +24,6 @@ Consultas automatizadas a una base de datos MySQL, con este objeto se evita escr
     <li>Insert</li>
     <li>Insert Columns Where con condicion AND</li>
     <li>Insert Columns Where con condicion OR</li>
-    <li>Insert</li>
     <li>Update Where con condion AND</li>
     <li>Update Where con condicion OR</li>
     <li>Delete All</li>
