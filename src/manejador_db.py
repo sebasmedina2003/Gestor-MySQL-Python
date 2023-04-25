@@ -199,6 +199,42 @@ class manejadorDB:
         self.cursor.execute(query)
         return self.cursor.fetchall()
 
+    def selectAllLikeAND(self, table: str, listColumnsParameters: list[str], listValuesParameters: list) -> list[tuple]:
+        """
+        SELECT * FROM table WHERE columnsParameters LIKE valuesParameters AND ...;\n
+        Selecciona todas las columnas de una tabla mientras se cumplan las condiciones, 
+        de busqueda parcial estas se concatenaran con AND
+        """
+        queryParameters = ""
+        for parametros, valores in zip(listColumnsParameters, listValuesParameters):
+            valores = valores if type(valores) in [
+                int, float] else f"\'%{valores}%\'"
+            queryParameters += f"{parametros} LIKE {valores} AND "
+
+        queryParameters = queryParameters[0:len(queryParameters)-5]
+
+        query = f"SELECT * FROM {table} WHERE {queryParameters};"
+        self.cursor.execute(query)
+        return self.cursor.fetchall()
+
+    def selectAllLikeOR(self, table: str, listColumnsParameters: list[str], listValuesParameters: list) -> list[tuple]:
+        """
+        SELECT * FROM table WHERE columnsParameters LIKE valuesParameters OR ...;\n
+        Selecciona todas las columnas de una tabla mientras se cumplan las condiciones, 
+        de busqueda parcial estas se concatenaran con OR
+        """
+        queryParameters = ""
+        for parametros, valores in zip(listColumnsParameters, listValuesParameters):
+            valores = valores if type(valores) in [
+                int, float] else f"\'%{valores}%\'"
+            queryParameters += f"{parametros} LIKE {valores} OR "
+
+        queryParameters = queryParameters[0:len(queryParameters)-4]
+
+        query = f"SELECT * FROM {table} WHERE {queryParameters};"
+        self.cursor.execute(query)
+        return self.cursor.fetchall()
+
     def selectMin(self, column: str, table: str) -> list[tuple[float | int]]:
         """
         SELECT MIN(column) FROM table;\n

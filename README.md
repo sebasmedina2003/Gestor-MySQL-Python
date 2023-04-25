@@ -18,6 +18,8 @@ Consultas automatizadas a una base de datos MySQL, con este objeto se evita escr
     <li>Select all</li>
     <li>Select all con condicion AND</li>
     <li>Select all con condicion OR</li>
+    <li>Select all con LIKE condicion AND</li>
+    <li>Select all con LIKE condicion OR</li>
     <li>Select all order by</li>
     <li>Select all where null</li>
     <li>Select all where not null</li>
