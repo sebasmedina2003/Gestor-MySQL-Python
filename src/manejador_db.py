@@ -21,6 +21,22 @@ class manejadorDB:
         """
         self.cursor.execute(f"USE {nameDB};")
 
+    def createDataBase(self, nameDB: str) -> None:
+        """
+        CREATE DATABASE nameDB;\n
+        Crea una nueva base de datos
+        """
+        self.cursor.execute(f"CREATE DATABASE {nameDB};")
+        self.commit()
+
+    def deleteDataBase(self, nameDB: str) -> None:
+        """
+        DROP DATABASE nameDB;\n
+        Borra una base de datos completamente
+        """
+        self.cursor.execute(f"DROP DATABASE {nameDB};")
+        self.commit()
+
     def commit(self) -> None:
         """
         COMMIT;\n
